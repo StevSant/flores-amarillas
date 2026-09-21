@@ -7,11 +7,15 @@
     <meta name="description" content="Un jardín de flores amarillas, para alguien especial." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://www.youtube.com" />
+    <link rel="preconnect" href="https://i.ytimg.com" />
+    <link rel="preconnect" href="https://rr1---sn-.googlevideo.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
+    <script src="https://www.youtube.com/iframe_api" async></script>
   </head>
   <body>
     <div class="night">
@@ -23,33 +27,44 @@
       </div>
 
       <svg class="sprite" aria-hidden="true">
+        <defs>
+          <radialGradient id="coreSun" cx="38%" cy="34%" r="72%">
+            <stop offset="0%" stop-color="#7d4d26" />
+            <stop offset="55%" stop-color="#432714" />
+            <stop offset="100%" stop-color="#22120a" />
+          </radialGradient>
+          <radialGradient id="coreSoft" cx="40%" cy="36%" r="70%">
+            <stop offset="0%" stop-color="#fff6c4" />
+            <stop offset="100%" stop-color="#eda800" />
+          </radialGradient>
+        </defs>
         <symbol id="icon-sun" viewBox="0 0 64 64">
-          <g fill="#f0b70f">
-            <ellipse cx="32" cy="10" rx="6.2" ry="16" />
-            <ellipse cx="32" cy="10" rx="6.2" ry="16" transform="rotate(30 32 32)" />
-            <ellipse cx="32" cy="10" rx="6.2" ry="16" transform="rotate(60 32 32)" />
-            <ellipse cx="32" cy="10" rx="6.2" ry="16" transform="rotate(90 32 32)" />
-            <ellipse cx="32" cy="10" rx="6.2" ry="16" transform="rotate(120 32 32)" />
-            <ellipse cx="32" cy="10" rx="6.2" ry="16" transform="rotate(150 32 32)" />
-            <ellipse cx="32" cy="10" rx="6.2" ry="16" transform="rotate(180 32 32)" />
-            <ellipse cx="32" cy="10" rx="6.2" ry="16" transform="rotate(210 32 32)" />
-            <ellipse cx="32" cy="10" rx="6.2" ry="16" transform="rotate(240 32 32)" />
-            <ellipse cx="32" cy="10" rx="6.2" ry="16" transform="rotate(270 32 32)" />
-            <ellipse cx="32" cy="10" rx="6.2" ry="16" transform="rotate(300 32 32)" />
-            <ellipse cx="32" cy="10" rx="6.2" ry="16" transform="rotate(330 32 32)" />
+          <g>
+            <ellipse cx="32" cy="9" rx="6" ry="16.5" />
+            <ellipse cx="32" cy="9" rx="6" ry="16.5" transform="rotate(30 32 32)" />
+            <ellipse cx="32" cy="9" rx="6" ry="16.5" transform="rotate(60 32 32)" />
+            <ellipse cx="32" cy="9" rx="6" ry="16.5" transform="rotate(90 32 32)" />
+            <ellipse cx="32" cy="9" rx="6" ry="16.5" transform="rotate(120 32 32)" />
+            <ellipse cx="32" cy="9" rx="6" ry="16.5" transform="rotate(150 32 32)" />
+            <ellipse cx="32" cy="9" rx="6" ry="16.5" transform="rotate(180 32 32)" />
+            <ellipse cx="32" cy="9" rx="6" ry="16.5" transform="rotate(210 32 32)" />
+            <ellipse cx="32" cy="9" rx="6" ry="16.5" transform="rotate(240 32 32)" />
+            <ellipse cx="32" cy="9" rx="6" ry="16.5" transform="rotate(270 32 32)" />
+            <ellipse cx="32" cy="9" rx="6" ry="16.5" transform="rotate(300 32 32)" />
+            <ellipse cx="32" cy="9" rx="6" ry="16.5" transform="rotate(330 32 32)" />
           </g>
-          <circle cx="32" cy="32" r="11" fill="#4a2a14" />
-          <circle cx="32" cy="32" r="7.2" fill="#2c170c" />
+          <circle cx="32" cy="32" r="11.4" fill="url(#coreSun)" />
+          <circle cx="32" cy="32" r="11.4" fill="none" stroke="#d9a51d" stroke-width="1.2" opacity=".5" />
         </symbol>
         <symbol id="icon-blossom" viewBox="0 0 64 64">
-          <g fill="#ffe566">
+          <g>
             <ellipse cx="32" cy="14" rx="10" ry="18" />
             <ellipse cx="32" cy="14" rx="10" ry="18" transform="rotate(72 32 32)" />
             <ellipse cx="32" cy="14" rx="10" ry="18" transform="rotate(144 32 32)" />
             <ellipse cx="32" cy="14" rx="10" ry="18" transform="rotate(216 32 32)" />
             <ellipse cx="32" cy="14" rx="10" ry="18" transform="rotate(288 32 32)" />
           </g>
-          <circle cx="32" cy="32" r="8.5" fill="#f0b400" />
+          <circle cx="32" cy="32" r="8.5" fill="url(#coreSoft)" />
         </symbol>
       </svg>
 
@@ -116,30 +131,43 @@
           <div class="flowers" id="flowers" aria-hidden="true"></div>
 
           <svg class="tree-svg" viewBox="0 0 1000 800" aria-hidden="true">
+            <defs>
+              <linearGradient id="bark" x1="0" y1="1" x2="0.25" y2="0">
+                <stop offset="0%" stop-color="#4f2810" />
+                <stop offset="55%" stop-color="#6b3a1a" />
+                <stop offset="100%" stop-color="#8a5228" />
+              </linearGradient>
+              <radialGradient id="soil" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#4a2a12" stop-opacity="0.42" />
+                <stop offset="55%" stop-color="#4a2a12" stop-opacity="0.16" />
+                <stop offset="100%" stop-color="#4a2a12" stop-opacity="0" />
+              </radialGradient>
+            </defs>
+
+            <ellipse class="ground" cx="500" cy="598" rx="205" ry="17" fill="url(#soil)" />
+
             <g
               fill="none"
-              stroke="#6b3a1a"
+              stroke="url(#bark)"
               stroke-linecap="round"
               stroke-linejoin="round"
               class="tree-strokes"
             >
-              <path class="grow" data-order="0" stroke-width="28" d="M502 668 C 504 575, 500 510, 498 430" />
-              <path class="grow" data-order="1" stroke-width="14" d="M498 520 C 430 490, 340 430, 250 360" />
-              <path class="grow" data-order="1" stroke-width="13" d="M500 500 C 560 470, 650 410, 760 340" />
-              <path class="grow" data-order="2" stroke-width="12" d="M498 455 C 470 400, 420 320, 360 230" />
-              <path class="grow" data-order="2" stroke-width="12" d="M498 448 C 540 390, 600 300, 650 210" />
-              <path class="grow" data-order="3" stroke-width="9" d="M400 340 C 350 300, 280 250, 210 200" />
-              <path class="grow" data-order="3" stroke-width="9" d="M430 300 C 400 240, 390 170, 400 110" />
-              <path class="grow" data-order="3" stroke-width="8" d="M580 320 C 640 280, 700 230, 780 190" />
-              <path class="grow" data-order="3" stroke-width="8" d="M600 280 C 630 220, 640 150, 620 90" />
-              <path class="grow" data-order="4" stroke-width="7" d="M360 230 C 330 180, 270 140, 200 120" />
-              <path class="grow" data-order="4" stroke-width="7" d="M650 210 C 700 170, 760 140, 830 130" />
-              <path class="grow" data-order="4" stroke-width="6" d="M250 360 C 200 330, 150 300, 110 250" />
-              <path class="grow" data-order="4" stroke-width="6" d="M760 340 C 820 310, 870 280, 910 230" />
-              <path class="grow" data-order="4" stroke-width="6" d="M400 110 C 370 70, 350 50, 340 30" />
-              <path class="grow" data-order="4" stroke-width="6" d="M620 90 C 650 50, 680 35, 710 20" />
+              <path class="grow" data-order="0" stroke-width="27" d="M500 594 C 505 552, 495 490, 500 416" />
+              <path class="grow" data-order="1" stroke-width="13" d="M500 432 C 468 400, 432 356, 390 300" />
+              <path class="grow" data-order="1" stroke-width="13" d="M500 430 C 532 398, 568 354, 610 300" />
+              <path class="grow" data-order="2" stroke-width="11" d="M500 416 C 496 356, 504 292, 500 208" />
+              <path class="grow" data-order="2" stroke-width="10" d="M460 372 C 420 330, 380 288, 330 240" />
+              <path class="grow" data-order="2" stroke-width="10" d="M540 370 C 580 328, 620 286, 670 238" />
+              <path class="grow" data-order="3" stroke-width="8" d="M440 350 C 420 300, 408 252, 404 200" />
+              <path class="grow" data-order="3" stroke-width="8" d="M560 348 C 580 298, 592 250, 596 198" />
+              <path class="grow" data-order="3" stroke-width="8" d="M390 300 C 356 262, 320 224, 288 184" />
+              <path class="grow" data-order="3" stroke-width="8" d="M610 298 C 644 260, 680 222, 712 182" />
+              <path class="grow" data-order="4" stroke-width="6" d="M330 240 C 306 212, 288 190, 274 164" />
+              <path class="grow" data-order="4" stroke-width="6" d="M670 238 C 694 210, 712 188, 726 162" />
+              <path class="grow" data-order="4" stroke-width="6" d="M500 300 C 478 266, 462 236, 452 200" />
+              <path class="grow" data-order="4" stroke-width="6" d="M500 296 C 522 262, 538 232, 548 196" />
             </g>
-            <line class="ground" x1="80" y1="670" x2="920" y2="670" />
           </svg>
 
           <div class="petal-rain" id="petalRain" aria-hidden="true"></div>
@@ -157,6 +185,5 @@
     </div>
 
     <script src="app.js"></script>
-    <script src="https://www.youtube.com/iframe_api"></script>
   </body>
 </html>

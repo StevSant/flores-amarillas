@@ -26,6 +26,8 @@ const heartGlow = document.getElementById("heartGlow");
 
 let ytPlayer = null;
 let wantMusic = false;
+let songReady = false;
+let volumeFade = null;
 
 document.getElementById("letterTo").textContent = nombre ? `Para ${nombre}` : "Para ti";
 document.getElementById("letterBody").textContent = mensaje;
@@ -52,11 +54,22 @@ function createYouTubePlayer() {
       playlist: CONFIG.youtubeId,
     },
     events: {
-      onReady() {
-        if (wantMusic) playSong();
+      onReady(event) {
+        // Buffer it silently up front so the song starts the instant she taps.
+        event.target.mute();
+        event.target.playVideo();
       },
       onStateChange(event) {
-        if (event.data === YT.PlayerState.ENDED) playSong();
+        if (event.data === YT.PlayerState.ENDED) {
+          playSong();
+          return;
+        }
+        if (event.data !== YT.PlayerState.PLAYING || songReady) return;
+
+        songReady = true;
+        // Hold it paused right where it buffered; resuming avoids a fresh fetch.
+        if (wantMusic) playSong();
+        else event.target.pauseVideo();
       },
     },
   });
@@ -128,8 +141,8 @@ function sproutFlowers(blooms) {
   const ranked = blooms.map((el) => {
     const x = parseFloat(el.style.getPropertyValue("--x"));
     const y = parseFloat(el.style.getPropertyValue("--y"));
-    const dist = Math.hypot(x - 50, y - 46);
-    return { el, wait: dist * 32 + Math.random() * 220 };
+    const dist = Math.hypot(x - 50, y - 58);
+    return { el, wait: dist * 26 + Math.random() * 420 };
   });
 
   ranked.sort((a, b) => a.wait - b.wait);
@@ -150,106 +163,78 @@ function sproutFlowers(blooms) {
 }
 
 function buildBlooms() {
-  const spots = [
-    ...branchSpots(),
-    ...heartPoints(),
-  ];
-
-  return spots.map((p) => {
-    const size = 22 + Math.random() * 14 + (p.edge ? 5 : 0);
-    const type = Math.random() < 0.22 ? "blossom" : "sun";
+  return canopyPoints().map((p) => {
+    const size = p.stray ? 19 + Math.random() * 11 : 26 + Math.random() * 20;
+    const type = Math.random() < 0.2 ? "blossom" : "sun";
+    const palette = type === "blossom" ? SOFT_TONES : SUN_TONES;
     return makeBloom({
       x: p.x,
       y: p.y,
       size,
       type,
+      petal: palette[Math.floor(Math.random() * palette.length)],
       rot: Math.random() * 360,
     });
   });
 }
 
-function branchSpots() {
-  const lines = [
-    [
-      [50, 48],
-      [42, 42],
-      [34, 36],
-      [26, 40],
-      [20, 30],
-      [14, 34],
-    ],
-    [
-      [50, 47],
-      [58, 40],
-      [66, 34],
-      [74, 38],
-      [80, 26],
-      [86, 22],
-    ],
-    [
-      [48, 40],
-      [40, 28],
-      [34, 18],
-      [28, 22],
-    ],
-    [
-      [52, 38],
-      [60, 24],
-      [68, 16],
-      [76, 14],
-    ],
-    [
-      [50, 36],
-      [50, 22],
-      [46, 12],
-    ],
-  ];
+function canopyPoints() {
+  const outline = heartOutline();
+  const points = [];
+  const stepX = 3.9;
+  const stepY = 4.9;
 
-  const spots = [];
-  lines.forEach((line) => {
-    for (let i = 0; i < line.length - 1; i += 1) {
-      const [x1, y1] = line[i];
-      const [x2, y2] = line[i + 1];
-      const steps = 3 + Math.floor(Math.random() * 2);
-      for (let s = 0; s <= steps; s += 1) {
-        const t = s / steps;
-        spots.push({
-          x: x1 + (x2 - x1) * t + (Math.random() - 0.5) * 3.2,
-          y: y1 + (y2 - y1) * t + (Math.random() - 0.5) * 2.8,
-          edge: false,
+  for (let y = 0; y <= 65; y += stepY) {
+    for (let x = 5; x <= 95; x += stepX) {
+      const jx = x + (Math.random() - 0.5) * stepX * 1.6;
+      const jy = y + (Math.random() - 0.5) * stepY * 1.6;
+      if (!pointInPolygon(jx, jy, outline)) continue;
+
+      points.push({ x: jx, y: jy, stray: false });
+      // Companions close by fill the gaps the grid leaves and read as clumps.
+      if (Math.random() < 0.34) {
+        const angle = Math.random() * Math.PI * 2;
+        points.push({
+          x: jx + Math.cos(angle) * (1.8 + Math.random() * 2.2),
+          y: jy + Math.sin(angle) * (2.2 + Math.random() * 2.8),
+          stray: false,
         });
       }
     }
-  });
-  return spots;
-}
+  }
 
-function heartPoints() {
-  const outline = [];
-  const steps = 56;
-  for (let i = 0; i < steps; i += 1) {
-    const t = (i / steps) * Math.PI * 2;
-    const p = heartXY(t);
-    outline.push({
-      x: 50 + p.x * 2.38 + (Math.random() - 0.5) * 0.9,
-      y: 27 + p.y * 1.82 + (Math.random() - 0.5) * 0.8,
+  // Flowers spilling past the edge keep the silhouette from looking stamped.
+  for (let i = 0; i < 18; i += 1) {
+    const p = outline[Math.floor(Math.random() * outline.length)];
+    points.push({
+      x: p.x + (p.x - 50) * 0.07 + (Math.random() - 0.5) * 4,
+      y: p.y + (p.y - 28) * 0.07 + (Math.random() - 0.5) * 4,
+      stray: true,
     });
   }
 
-  const points = outline
-    .filter(() => Math.random() > 0.12)
-    .map((p) => ({ x: p.x, y: p.y, edge: true }));
+  return points;
+}
 
-  let tries = 0;
-  while (points.length < 108 && tries < 1400) {
-    tries += 1;
-    const x = 14 + Math.random() * 72;
-    const y = 7 + Math.random() * 44;
-    if (!pointInPolygon(x, y, outline)) continue;
-    points.push({ x, y, edge: false });
+// A wobbly heart reads as a tree that grew this way, not as a stamped shape.
+function heartOutline() {
+  const a = Math.random() * Math.PI * 2;
+  const b = Math.random() * Math.PI * 2;
+  const c = Math.random() * Math.PI * 2;
+  const outline = [];
+
+  for (let i = 0; i < 140; i += 1) {
+    const t = (i / 140) * Math.PI * 2;
+    const wobble =
+      1 + 0.045 * Math.sin(3 * t + a) + 0.032 * Math.sin(7 * t + b) + 0.022 * Math.sin(13 * t + c);
+    const p = heartXY(t);
+    outline.push({
+      x: 50 + p.x * 2.32 * wobble,
+      y: 28 + p.y * 1.82 * wobble,
+    });
   }
 
-  return points;
+  return outline;
 }
 
 function pointInPolygon(x, y, poly) {
@@ -271,7 +256,10 @@ function heartXY(t) {
   return { x, y };
 }
 
-function makeBloom({ x, y, size, type, rot = Math.random() * 50 }) {
+const SUN_TONES = ["#f2bc12", "#ffd233", "#e8a80b", "#ffc61f", "#f7cb3d"];
+const SOFT_TONES = ["#ffe574", "#ffdd57", "#fff0a3"];
+
+function makeBloom({ x, y, size, type, petal, rot = Math.random() * 50 }) {
   const el = document.createElement("button");
   el.type = "button";
   el.className = "bloom";
@@ -281,6 +269,7 @@ function makeBloom({ x, y, size, type, rot = Math.random() * 50 }) {
   el.style.setProperty("--rot", `${rot}deg`);
   el.style.setProperty("--x", `${x}%`);
   el.style.setProperty("--y", `${y}%`);
+  el.style.setProperty("--petal", petal);
   const icon = type === "blossom" ? "icon-blossom" : "icon-sun";
   el.innerHTML = `<span class="bloom-face"><svg viewBox="0 0 64 64"><use href="#${icon}"></use></svg></span>`;
   return el;
@@ -327,6 +316,23 @@ function startMusic() {
 function playSong() {
   if (!ytPlayer || typeof ytPlayer.playVideo !== "function") return;
   ytPlayer.unMute();
-  ytPlayer.setVolume(80);
   ytPlayer.playVideo();
+  fadeInVolume();
+
+  window.setTimeout(() => {
+    if (wantMusic && ytPlayer.getPlayerState() !== YT.PlayerState.PLAYING) {
+      ytPlayer.playVideo();
+    }
+  }, 1200);
+}
+
+function fadeInVolume() {
+  window.clearInterval(volumeFade);
+  let level = 0;
+  ytPlayer.setVolume(level);
+  volumeFade = window.setInterval(() => {
+    level += 10;
+    ytPlayer.setVolume(Math.min(level, 80));
+    if (level >= 80) window.clearInterval(volumeFade);
+  }, 70);
 }

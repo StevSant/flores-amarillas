@@ -102,12 +102,14 @@ body {
   width: min(820px, calc(100% - 48px));
   height: min(640px, calc(100dvh - 72px));
   background:
-    radial-gradient(900px 380px at 50% 18%, rgba(255, 236, 170, 0.38), transparent 58%),
-    #f6ecd8;
+    radial-gradient(760px 320px at 50% 14%, rgba(255, 238, 178, 0.55), transparent 62%),
+    radial-gradient(120% 90% at 50% 100%, rgba(196, 150, 96, 0.18), transparent 60%),
+    linear-gradient(#fbf4e4, #f2e6cd);
   border-radius: var(--card-radius);
   box-shadow:
-    0 30px 60px rgba(20, 0, 12, 0.38),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+    0 34px 70px rgba(20, 0, 12, 0.42),
+    0 2px 0 rgba(255, 255, 255, 0.5) inset,
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
   position: relative;
   overflow: hidden;
   z-index: 1;
@@ -226,19 +228,23 @@ body {
 }
 
 .ground {
-  stroke: #2c1810;
-  stroke-width: 3;
   opacity: 0;
 }
 
 .garden.is-live .ground {
-  animation: fadeLine 0.6s ease 0.15s forwards;
+  animation: fadeLine 1.1s ease 0.2s forwards;
 }
 
 .flowers {
   position: absolute;
   inset: 0;
   z-index: 2;
+}
+
+.tree-svg,
+.flowers {
+  transform-origin: 50% 74%;
+  animation: breeze 11s ease-in-out infinite;
 }
 
 .bloom {
@@ -279,7 +285,8 @@ body {
   height: 100%;
   display: block;
   overflow: visible;
-  filter: drop-shadow(0 1px 1px rgba(80, 40, 0, 0.18));
+  fill: var(--petal, #f2bc12);
+  filter: drop-shadow(0 1.5px 1.5px rgba(96, 52, 8, 0.26));
 }
 
 .bloom.is-open {
@@ -336,9 +343,15 @@ body {
   right: 0;
   bottom: 0;
   z-index: 5;
-  padding: 28px 24px 16px;
+  padding: 44px 24px 20px;
   text-align: center;
-  background: linear-gradient(to top, rgba(246, 236, 216, 0.78) 0%, rgba(246, 236, 216, 0.2) 70%, transparent 100%);
+  background: linear-gradient(
+    to top,
+    rgba(248, 240, 222, 0.96) 0%,
+    rgba(248, 240, 222, 0.88) 42%,
+    rgba(248, 240, 222, 0.42) 74%,
+    transparent 100%
+  );
   opacity: 0;
   transform: translateY(12px);
   pointer-events: none;
@@ -349,11 +362,11 @@ body {
 }
 
 .letter-date {
-  margin: 0 0 2px;
-  font-size: 0.72rem;
-  letter-spacing: 0.16em;
+  margin: 0 0 6px;
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
   text-transform: lowercase;
-  opacity: 0.5;
+  color: #9a7042;
 }
 
 .letter-to {
@@ -381,19 +394,24 @@ body {
 
 .mute-btn {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 16px;
+  right: 16px;
   z-index: 6;
-  width: 42px;
-  height: 42px;
-  border: 0;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(154, 112, 66, 0.22);
   border-radius: 999px;
   cursor: pointer;
-  color: var(--ink);
-  background: rgba(244, 234, 216, 0.85);
-  box-shadow: 0 6px 16px rgba(80, 30, 10, 0.16);
-  font-size: 1.15rem;
+  color: #8a5a32;
+  background: rgba(252, 246, 234, 0.9);
+  box-shadow: 0 4px 12px rgba(80, 30, 10, 0.12);
+  font-size: 1.05rem;
   line-height: 1;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.mute-btn:hover {
+  transform: scale(1.08);
 }
 
 .mute-btn[hidden] {
@@ -469,13 +487,13 @@ body {
   }
 }
 
-@keyframes sway {
+@keyframes breeze {
   0%,
   100% {
-    transform: rotate(var(--rot, 0deg));
+    transform: rotate(-0.45deg);
   }
   50% {
-    transform: rotate(calc(var(--rot, 0deg) + 12deg)) translateY(-3px);
+    transform: rotate(0.45deg);
   }
 }
 
@@ -540,7 +558,9 @@ body {
   .petal,
   .letter,
   .ground,
-  .heart-glow {
+  .heart-glow,
+  .tree-svg,
+  .flowers {
     animation: none !important;
   }
 
